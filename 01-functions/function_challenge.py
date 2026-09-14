@@ -15,17 +15,30 @@ TODO: Complete these functions using your new function skills.
 Hint: Apply what you learned in the README and function_basics.py!
 """
 
+import datetime
+
+
 def validate_ip_address(ip):
     """
     Bonus 1: Create a function that checks if an IP address looks valid
     TODO: Check if the IP has 4 numbers separated by dots
     """
     # TODO: Split the IP address by '.' and check if there are 4 parts
+
+    split_ip = ip.split('.')
+    if len(split_ip) != 4:
+        return False
+
     # TODO: Check if each part is a number between 0 and 255
-    # Hint: You can use split('.') and len() and int()
     
+    for part in split_ip:
+        if not part.isdigit() or not (0 <= int(part) <= 255):
+            return False
+
+    # Hint: You can use split('.') and len() and int()
     # Return True if valid, False if not
-    return False
+
+    return True
 
 
 def backup_device_config(device_name, config_type="running"):
@@ -33,11 +46,14 @@ def backup_device_config(device_name, config_type="running"):
     Bonus 2: Create a backup filename with timestamp
     TODO: Generate a unique backup filename
     """
-    # TODO: Import datetime at the top of the file
+    # TODO: Import datetime at the top of the file - Done!
     # TODO: Create a timestamp string like "20241027_143000"
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
     # TODO: Create filename like "Router01_running_20241027_143000.cfg"
-    
-    filename = f"{device_name}_{config_type}_backup.cfg"
+
+
+    filename = f"{device_name}_{config_type}_{timestamp}.cfg"
     print(f"✓ Backup saved as {filename}")
     return filename
 
@@ -55,6 +71,19 @@ def calculate_subnet_info(ip_address, subnet_mask):
     # - Broadcast address  
     # - Number of host addresses
     
+    ip_parts = list(map(int, ip_address.split('.')))
+    mask_parts = list(map(int, subnet_mask.split('.')))
+
+    network_address = [ip & mask for ip, mask in zip(ip_parts, mask_parts)]
+    broadcast_address = [network | (~mask & 0xFF) for network, mask in zip(network_address, mask_parts)]
+    num_hosts = (2 ** (32 - sum(bin(mask).count('1') for mask in mask_parts))) - 2
+
+    print()
+    print(f"Network Address: {'.'.join(map(str, network_address))}")
+    print(f"Broadcast Address: {'.'.join(map(str, broadcast_address))}")
+    print(f"Number of Host Addresses: {num_hosts}")
+
+
     return "Network info calculated!"
 
 

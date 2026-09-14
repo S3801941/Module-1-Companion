@@ -23,9 +23,13 @@ def connect_device(hostname, username):
     # TODO: Print a connection message using the hostname and username
     # Example: "Connecting to Router-01 as admin..."
     
+    print(f"Connecting to {hostname} as {username}")
+
+
     # TODO: Return True to indicate successful connection
     # Hint: Just like the README example, use print() and return
-    pass
+    
+    return True
 
 
 def configure_interface(device_name, interface, ip_address, subnet_mask="255.255.255.0"):
@@ -37,6 +41,12 @@ def configure_interface(device_name, interface, ip_address, subnet_mask="255.255
     # TODO: Print configuration details
     # Show device name, interface, IP address, and subnet mask
     # Example: "Configuring GigE0/1 on Router-01: 192.168.1.1/255.255.255.0"
+    
+    print("Device, Interface, and IP Configuration:" \
+          f"\nDevice: {device_name}" \
+          f"\nInterface: {interface}" \
+          f"\nIP Address: {ip_address}" \
+          f"\nSubnet Mask: {subnet_mask}")
     
     # TODO: Notice how subnet_mask already has a default value of "255.255.255.0"
     # This means if someone doesn't provide a mask, it uses /24 automatically!
@@ -52,9 +62,19 @@ def create_vlan(switch_name, vlan_id, vlan_name="Data", ports=None):
     # TODO: Handle the case where no ports are provided
     # Hint: Use 'if ports is None: ports = []'
     
+    if ports is None:
+        ports = []
+
+
+
     # TODO: Print VLAN creation details
     # Include switch name, VLAN ID, VLAN name, and number of ports
     
+    print(f"Configuring Vlan on switch {switch_name}:" \
+        f"\nVLAN ID: {vlan_id}" \
+        f"\nVLAN Name: {vlan_name}" \
+        f"\nPorts: {ports}")
+
     print(f"✓ VLAN {vlan_id} created on {switch_name}")
 
 
@@ -68,6 +88,10 @@ def configure_multiple_devices(*device_names):
     
     # TODO: Loop through each device name
     # Print a configuration message for each device
+    
+    for device in device_names:
+        print(f"Configuring device: {device}")
+
     # Hint: The README shows 'for device in devices:' - do the same with device_names
     
     print("✓ All devices configured!")
@@ -84,6 +108,9 @@ def setup_network(**network_settings):
     # TODO: Loop through the network settings and print each one
     # Hint: The README shows 'for setting, value in settings.items():' - copy that pattern!
     
+    for setting, value in network_settings.items():
+        print(f"{setting}: {value}")
+
     print("✓ Network setup complete!")
 
 
@@ -99,11 +126,16 @@ def main():
     
     print("\n=== Testing Default Parameters ===")
     configure_interface("Switch-01", "GigE0/1", "192.168.1.10")
+    print()
     configure_interface("Router-02", "GigE0/0", "10.0.0.1", "255.255.0.0")
     
     print("\n=== Testing Optional Parameters ===")
     create_vlan("Switch-01", 100, "Sales", ["Fa0/1", "Fa0/2"])
+    print()
     create_vlan("Switch-02", 200)  # Uses default name
+    print()
+    create_vlan("Switch-03", 30, "Management", ["Fa0/3", "Fa0/4", "Fa0/5"])    
+
     
     print("\n=== Testing Multiple Arguments ===")
     configure_multiple_devices("Router-01", "Router-02", "Switch-01")
