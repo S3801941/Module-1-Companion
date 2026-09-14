@@ -28,10 +28,18 @@ class NetworkDevice:
         # TODO: Store hostname, ip_address, and device_type as instance attributes
         # Hint: self.hostname = hostname
         
+        self.hostname = hostname
+        self.ip_address = ip_address
+        self.device_type = device_type
+
         # TODO: Initialize connection status as "disconnected"
         
+        self.net_stat = "disconnected"
+
         # TODO: Create an empty interfaces list for this device
-        
+
+        self.interfaces = []
+
         pass
     
     def connect(self):
@@ -41,7 +49,11 @@ class NetworkDevice:
         TODO: Implement the connection behavior (Methods section in README)
         """
         # TODO: Change status to "connected"
+        self.net_stat = "connected"
+
         # TODO: Print a connection success message with the hostname
+        print(f"✓ Connected to {self.hostname}")
+
         pass
     
     def disconnect(self):
@@ -50,8 +62,13 @@ class NetworkDevice:
         
         TODO: Implement disconnection behavior
         """
-        # TODO: Change status to "disconnected" 
+
+        # TODO: Change status to "disconnected"
+        self.net_stat = "disconnected"
+
         # TODO: Print disconnection message
+        print(f"✗ Disconnected from {self.hostname}")
+
         pass
     
     def display_info(self):
@@ -61,6 +78,12 @@ class NetworkDevice:
         TODO: Display all device details
         """
         # TODO: Print hostname, IP, type, and connection status
+        print(f"Device Info:")
+        print(f"  Hostname: {self.hostname}")
+        print(f"  IP Address: {self.ip_address}")
+        print(f"  Device Type: {self.device_type}")
+        print(f"  Status: {self.net_stat}")
+
         # Make it look professional!
         pass
 
@@ -95,9 +118,18 @@ class SmartNetworkDevice:
         TODO: Add hostname validation (Properties section in README)
         """
         # TODO: Check if value is a string and not empty
+        if not isinstance(value, str) or not value:
+            raise ValueError("Hostname must be a non-empty string.")
+        
         # TODO: Check length is reasonable (1-63 characters)
+        if not (1 <= len(value) <= 63):
+            raise ValueError("Hostname must be between 1 and 63 characters long.")
+        
         # TODO: Store the validated hostname
+        self._hostname = value
+
         # TODO: Raise ValueError if invalid
+        # See value checks above for examples
         pass
     
     @property
