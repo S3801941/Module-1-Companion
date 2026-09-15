@@ -162,6 +162,14 @@ print("   from network_package import devices")
 print("   from network_package.config import backup_config")
 print()
 
+import network_package.devices
+import network_package.config
+
+print("🔸 Imported from network_package:")
+print(f"   Devices: {network_package.devices.network_devices()}")
+print(f"   Router Config: {network_package.config.router_config()}")
+print(f"   Switch Config: {network_package.config.switch_config()}")
+
 # ====================================================================
 # PART 7: REAL-WORLD SIMULATION
 # ====================================================================
@@ -191,12 +199,12 @@ def simulate_network_automation():
         # This is how professionals use modules!
         
         # Step 1: Test connectivity
-        # if my_network_tools.ping_device(device['ip']):
-        #     # Step 2: Get device information  
-        #     my_network_tools.get_device_info(device['name'])
-        #     print(f"   ✅ {device['name']} processed successfully!")
-        # else:
-        #     print(f"   ❌ {device['name']} unreachable!")
+        if my_network_tools.ping_device(device['ip']):
+        # Step 2: Get device information  
+            my_network_tools.get_device_info(device['name'])
+            print(f"   ✅ {device['name']} processed successfully!")
+        else:
+            print(f"   ❌ {device['name']} unreachable!")
         
         print(f"   ⏳ Would process {device['name']} with your module functions...")
     
