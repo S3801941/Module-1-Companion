@@ -50,12 +50,12 @@ print("2️⃣ Testing Basic Module Imports:")
 
 try:
     # TODO: Uncomment this line after creating my_network_tools.py
-    # import my_network_tools
+    import my_network_tools
     
     # TODO: Use your module functions (uncomment after creating the module)
-    # print("\n🔸 Using import module_name style:")
-    # my_network_tools.ping_device("192.168.1.1")
-    # my_network_tools.get_device_info("CORE-SWITCH-01")
+    print("\n🔸 Using import module_name style:")
+    my_network_tools.ping_device("192.168.1.1")
+    my_network_tools.get_device_info("CORE-SWITCH-01")
     
     print("❌ Create 'my_network_tools.py' file first with the functions above!")
     
