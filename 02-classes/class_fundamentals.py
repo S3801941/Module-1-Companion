@@ -145,10 +145,24 @@ class SmartNetworkDevice:
         TODO: Implement IP address validation
         """
         # TODO: Allow None to clear IP address
+        if value is None:
+            self._ip_address = None
+            return
+
         # TODO: For non-None values, validate IP format
+        for part in value.split('.'):
+            if not part.isdigit() or not (0 <= int(part) <= 255):
+                raise ValueError("IP address must be in the format x.x.x.x where x is 0-255.")
+
         # TODO: Check it has 4 parts separated by dots
+        if len(value.split('.')) != 4:
+            raise ValueError("IP address must have exactly 4 parts separated by dots.")
+
         # TODO: Each part should be 0-255
+
         # TODO: Store valid IP or raise ValueError
+        self._ip_address = value
+
         pass
     
     @property
@@ -159,8 +173,11 @@ class SmartNetworkDevice:
         TODO: Implement this computed property
         """
         # TODO: Return True if hostname exists and IP is set
+        if self._hostname and self._ip_address:
+            return True
+        
         # TODO: Otherwise return False
-        pass
+        return False
 
 # ====================================================================
 # PART 3: INHERITANCE - Device Families (Inheritance section)
@@ -182,10 +199,16 @@ class Router(NetworkDevice):
         """
         # TODO: Call parent class __init__ with "Router" as device_type
         # Hint: super().__init__(hostname, ip_address, "Router")
-        
+
         # TODO: Add router-specific attributes
         # model, routing_table (empty list), ospf_enabled (False)
-        
+
+        super().__init__(hostname, ip_address, "Router")
+        self.model = model
+        self.routing_table = []
+        self.ospf_enabled = False
+
+
         pass
     
     def add_route(self, network, next_hop):
@@ -195,8 +218,14 @@ class Router(NetworkDevice):
         TODO: Implement route addition
         """
         # TODO: Create a route dictionary with 'network' and 'next_hop' keys
+        route = {"network": network, "next_hop": next_hop}
+
         # TODO: Add it to the routing_table list
+        self.routing_table.append(route)
+
         # TODO: Print confirmation message
+        print(f"Route added: {network} -> {next_hop}")
+
         pass
     
     def show_routes(self):
@@ -206,7 +235,13 @@ class Router(NetworkDevice):
         TODO: Show all configured routes
         """
         # TODO: Print header for routing table
+        print("Routing Table:")
         # TODO: Loop through routes and display them nicely
+        if self.routing_table:
+            for route in self.routing_table:
+                print(f"  {route['network']} -> {route['next_hop']}")
+        else:
+            print("  No routes configured.")
         # TODO: Handle case when no routes exist
         pass
 
@@ -224,13 +259,18 @@ class Switch(NetworkDevice):
         TODO: Implement switch initialization
         """
         # TODO: Call parent __init__ with "Switch" as device_type
-        
+        super().__init__(hostname, ip_address, "Switch")
+
         # TODO: Add switch-specific attributes:
         # port_count, vlans (empty dict), mac_table (empty dict)
-        
+        self.port_count = port_count
+        self.vlans = {}
+        self.mac_table = {}
+
         # TODO: Create default VLAN 1
         # Hint: self.vlans[1] = {"name": "default", "ports": []}
-        
+        self.vlans[1] = {"name": "default", "ports": []}
+
         pass
     
     def create_vlan(self, vlan_id, name):
@@ -240,7 +280,11 @@ class Switch(NetworkDevice):
         TODO: Add VLAN to the switch
         """
         # TODO: Add VLAN to vlans dict with name and empty ports list
+        self.vlans[vlan_id] = {"name": name, "ports": []}
+
         # TODO: Print VLAN creation message
+        print(f"VLAN created: {vlan_id} - {name}")
+
         pass
     
     def show_vlans(self):
@@ -250,7 +294,13 @@ class Switch(NetworkDevice):
         TODO: Show VLAN information
         """
         # TODO: Print VLAN header
+        print("VLAN Information:")
+
         # TODO: Loop through vlans and display ID, name, and port count
+        for vlan_id, vlan_info in self.vlans.items():
+            port_count = len(vlan_info["ports"])
+            print(f"  VLAN {vlan_id}: {vlan_info['name']} - Ports: {port_count}")
+
         pass
 
 # ====================================================================
@@ -267,7 +317,11 @@ class CiscoDevice:
     def __init__(self, ios_version="15.1", **kwargs):
         """TODO: Initialize Cisco-specific attributes"""
         # TODO: Store ios_version
+        self.ios_version = ios_version
+
         # TODO: Call super().__init__(**kwargs) to continue inheritance chain
+        super().__init__(**kwargs)
+        
         pass
     
     def show_version(self):
@@ -277,7 +331,7 @@ class CiscoDevice:
         TODO: Display Cisco version info
         """
         # TODO: Print Cisco IOS version information
-        pass
+        print(f"Cisco IOS Version: {self.ios_version}")
 
 class CiscoRouter(Router, CiscoDevice):
     """
@@ -292,8 +346,13 @@ class CiscoRouter(Router, CiscoDevice):
         TODO: Handle multiple inheritance initialization
         """
         # TODO: Initialize Router part
+        Router.__init__(self, hostname, ip_address, model)
+
         # TODO: Initialize CiscoDevice part  
+        CiscoDevice.__init__(self, ios_version=ios_version)
+
         # Hint: Use Router.__init__ and CiscoDevice.__init__
+        
         pass
     
     def show_cisco_routes(self):
@@ -303,8 +362,17 @@ class CiscoRouter(Router, CiscoDevice):
         TODO: Combine router and Cisco functionality
         """
         # TODO: Print Cisco-style header
+        print("Cisco Routing Table:")
+
         # TODO: Call parent show_routes method
+        self.routing_table = self.routing_table  # Ensure routing_table is accessible
+        print("Network\t\tNext Hop")
+        for route in self.routing_table:
+            print(f"{route['network']}\t{route['next_hop']}")
+
         # TODO: Add Cisco-specific route information
+        
+
         pass
 
 # ====================================================================
@@ -316,52 +384,52 @@ if __name__ == "__main__":
     
     # TODO: Complete all the classes above, then uncomment these tests:
     
-    # # Test 1: Basic NetworkDevice
-    # print("1️⃣ Basic Network Device:")
-    # device = NetworkDevice("CORE-SW1", "192.168.1.10", "Switch")
-    # device.display_info()
-    # device.connect()
-    # device.disconnect()
-    # print()
+    # Test 1: Basic NetworkDevice
+    print("1️⃣ Basic Network Device:")
+    device = NetworkDevice("CORE-SW1", "192.168.1.10", "Switch")
+    device.display_info()
+    device.connect()
+    device.disconnect()
+    print()
     
-    # # Test 2: Smart Properties
-    # print("2️⃣ Smart Properties:")
-    # smart_device = SmartNetworkDevice("BORDER-RTR", "Router")
-    # smart_device.ip_address = "192.168.1.1"  # Should work
-    # print(f"Configured: {smart_device.is_configured}")
-    # 
-    # # Test validation
-    # try:
-    #     smart_device.ip_address = "999.999.999.999"  # Should fail
-    # except ValueError as e:
-    #     print(f"✅ Validation caught invalid IP: {e}")
-    # print()
+    # Test 2: Smart Properties
+    print("2️⃣ Smart Properties:")
+    smart_device = SmartNetworkDevice("BORDER-RTR", "Router")
+    smart_device.ip_address = "192.168.1.1"  # Should work
+    print(f"Configured: {smart_device.is_configured}")
+    
+    # Test validation
+    try:
+        smart_device.ip_address = "999.999.999.999"  # Should fail
+    except ValueError as e:
+        print(f"✅ Validation caught invalid IP: {e}")
+    print()
     
     # # Test 3: Router Inheritance
-    # print("3️⃣ Router Inheritance:")
-    # router = Router("BORDER-R1", "10.0.1.1", "ISR4331")
-    # router.connect()
-    # router.add_route("0.0.0.0/0", "10.0.1.254")
-    # router.add_route("192.168.0.0/16", "10.0.1.2")
-    # router.show_routes()
-    # print()
+    print("3️⃣ Router Inheritance:")
+    router = Router("BORDER-R1", "10.0.1.1", "ISR4331")
+    router.connect()
+    router.add_route("0.0.0.0/0", "10.0.1.254")
+    router.add_route("192.168.0.0/16", "10.0.1.2")
+    router.show_routes()
+    print()
     
-    # # Test 4: Switch Inheritance  
-    # print("4️⃣ Switch Inheritance:")
-    # switch = Switch("ACCESS-SW1", "10.0.1.2", 48)
-    # switch.connect()
-    # switch.create_vlan(10, "Data")
-    # switch.create_vlan(20, "Voice") 
-    # switch.show_vlans()
-    # print()
+    # Test 4: Switch Inheritance  
+    print("4️⃣ Switch Inheritance:")
+    switch = Switch("ACCESS-SW1", "10.0.1.2", 48)
+    switch.connect()
+    switch.create_vlan(10, "Data")
+    switch.create_vlan(20, "Voice") 
+    switch.show_vlans()
+    print()
     
-    # # Test 5: Multiple Inheritance (Advanced!)
-    # print("5️⃣ Multiple Inheritance:")
-    # cisco_router = CiscoRouter("CORE-R1", "10.0.2.1", "ISR4451", "16.12")
-    # cisco_router.connect()
-    # cisco_router.show_version()
-    # cisco_router.add_route("172.16.0.0/12", "10.0.2.254")
-    # cisco_router.show_cisco_routes()
+    # Test 5: Multiple Inheritance (Advanced!)
+    print("5️⃣ Multiple Inheritance:")
+    cisco_router = CiscoRouter("CORE-R1", "10.0.2.1", "ISR4451", "16.12")
+    cisco_router.connect()
+    cisco_router.show_version()
+    cisco_router.add_route("172.16.0.0/12", "10.0.2.254")
+    cisco_router.show_cisco_routes()
     
     # 🏆 SUCCESS MESSAGE
     print("🎯 Complete the TODOs above to unlock the test code!")
