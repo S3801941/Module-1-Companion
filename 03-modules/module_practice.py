@@ -57,7 +57,7 @@ try:
     my_network_tools.ping_device("192.168.1.1")
     my_network_tools.get_device_info("CORE-SWITCH-01")
     
-    print("❌ Create 'my_network_tools.py' file first with the functions above!")
+
     
 except ImportError:
     print("❌ Could not import my_network_tools module!")
@@ -73,14 +73,12 @@ print("3️⃣ Testing Specific Function Imports:")
 
 try:
     # TODO: Uncomment these lines after creating my_network_tools.py
-    # from my_network_tools import ping_device, configure_vlan
+    from my_network_tools import ping_device, configure_vlan
     
     # TODO: Use imported functions directly (uncomment after creating module)
-    # print("\n🔸 Using from module import function style:")
-    # ping_device("10.0.1.1")  # No module name needed!
-    # configure_vlan("ACCESS-SW1", 10, "Sales_VLAN")
-    
-    print("❌ Create 'my_network_tools.py' file first!")
+    print("\n🔸 Using from module import function style:")
+    ping_device("10.0.1.1")  # No module name needed!
+    configure_vlan("ACCESS-SW1", 10, "Sales_VLAN")
     
 except ImportError:
     print("❌ Could not import specific functions!")
@@ -96,15 +94,13 @@ print("4️⃣ Testing Import Aliases:")
 
 try:
     # TODO: Uncomment these lines after creating my_network_tools.py
-    # import my_network_tools as tools  # Shorter name!
-    # from my_network_tools import get_device_info as get_info
+    import my_network_tools as tools  # Shorter name!
+    from my_network_tools import get_device_info as get_info
     
     # TODO: Use aliased imports (uncomment after creating module)
-    # print("\n🔸 Using aliases for shorter names:")
-    # tools.ping_device("172.16.1.1")
-    # get_info("BORDER-ROUTER")
-    
-    print("❌ Create 'my_network_tools.py' file first!")
+    print("\n🔸 Using aliases for shorter names:")
+    tools.ping_device("172.16.1.1")
+    get_info("BORDER-ROUTER")
     
 except ImportError:
     print("❌ Could not import with aliases!")
