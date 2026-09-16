@@ -15,14 +15,16 @@ def create_device_list():
     print("=== Creating Device Inventory ===")
     
     # TODO: Create a simple device list (hint: use a multi-line string)
-    device_data = """Router-01,192.168.1.1
-Switch-01,192.168.1.10  
-Firewall-01,192.168.1.100"""
+    device_data = """Router-01,192.168.1.1,gig0/0-4
+Switch-01,192.168.1.10,FastEthernet0/1-24  
+Firewall-01,192.168.1.100,eth0-1"""
     
     filename = "devices.txt"
     
     # TODO: Write the device data to a file
     # Hint: Use 'w' mode and don't forget encoding='utf-8'
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write(device_data)
     
     print(f"✓ Created {filename} with device list!")
 
@@ -38,7 +40,10 @@ def read_device_list():
     
     # TODO: Read and display the file contents
     # Hint: Use 'r' mode and the 'with' statement for safe file handling
-    
+    with open(filename, 'r', encoding='utf-8') as f:
+        content = f.read()
+        print("Device List:\n" + content)
+
     print("Device list loaded successfully!")
 
 
@@ -57,6 +62,27 @@ interface GigabitEthernet0/0
  ip address 192.168.1.1 255.255.255.0
  no shutdown
 !
+interface GigabitEthernet0/1
+ ip address 192.168.2.20 255.255.255.254
+ no shutdown
+!
+interface GigabitEthernet0/2
+ ip address 10.10.10.1 255.255.255.0
+ no shutdown
+ isis
+ isis spbm 1
+ isis spbm 1 circuit-type level-1
+ isis enable
+!
+interface GigabitEthernet0/3
+ ip address 10.20.20.50
+ vlan 20
+ no shutdown
+!
+interface GigabitEthernet0/4
+ ip address 0.0.0.0 0.0.0.0
+ shutdown
+!
 end"""
     
     # TODO: Create a backup filename with timestamp
@@ -66,7 +92,8 @@ end"""
     backup_filename = f"router_backup_{timestamp}.cfg"
     
     # TODO: Save the configuration to the backup file
-    
+    with open(backup_filename, 'w', encoding='utf-8') as f:
+        f.write(config)
     print(f"✓ Backup saved as {backup_filename}")
 
 
@@ -79,12 +106,25 @@ def safe_file_operations():
     
     # TODO: Try to read a file that might not exist
     # Hint: Use try/except to handle FileNotFoundError
-    
+    with open("maybe_exists.txt", 'w', encoding='utf-8') as f: 
+        f.write("If you are reading this, then this file exists." \
+        "\nIf you delete this file, the error handling will be triggered." \
+        "\nTry deleting this file and running the program again to see the error handling in action!" \
+        "\n\nGood luck!")
+
     test_filename = "maybe_exists.txt"
     
     # Your error handling code goes here!
-    
-    print("Error handling complete!")
+    try:
+        with open(test_filename, 'r', encoding='utf-8') as f:
+            content = f.read()
+            print("File contents:\n" + content)
+    except FileNotFoundError:
+        print(f"⚠️  File not found: {test_filename}")
+        print("Error handling complete!")
+    except Exception as e:
+        print(f"❌ An error occurred: {e}")
+        print("Error handling complete!")
 
 
 def main():

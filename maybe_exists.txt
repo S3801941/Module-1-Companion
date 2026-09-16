@@ -1,0 +1,5 @@
+If you are reading this, then this file exists.
+If you delete this file, the error handling will be triggered.
+Try deleting this file and running the program again to see the error handling in action!
+
+Good luck!

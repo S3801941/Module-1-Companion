@@ -1,0 +1,3 @@
+Router-01,192.168.1.1,gig0/0-4
+Switch-01,192.168.1.10,FastEthernet0/1-24  
+Firewall-01,192.168.1.100,eth0-1
