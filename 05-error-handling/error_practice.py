@@ -52,7 +52,7 @@ def practice_basic_errors():
     
     # TODO: Handle list index errors
     print("🔸 Practice with list index errors:")
-    devices = ["router1", "switch1", "firewall1"]
+    devices = ["router1", "switch1", "firewall1", "access-point1", "load-balancer1", "server1", "database1", "vpn-gateway1", "proxy1", "dns-server1"]
     
     try:
         # TODO: Try to access index 5 (doesn't exist!)
@@ -68,7 +68,7 @@ def practice_basic_errors():
     
     # TODO: Handle dictionary key errors  
     print("🔸 Practice with dictionary key errors:")
-    device_info = {"hostname": "router1", "ip": "192.168.1.1"}
+    device_info = {"hostname": "router1", "ip": "192.168.1.1", "model": "ISR4451-X", "os_version": "16.9.3", "location": "Data Center 1"}
     
     try:
         # TODO: Try to access a key that doesn't exist
@@ -126,7 +126,11 @@ def practice_file_errors():
     """
     print("4️⃣ Your Turn - Practice File Error Handling:")
     print()
-    
+
+    with open("router1.cfg", "w") as f:
+        f.write("enable\nconfig -t \n hostname Router1\ninterface gi0/0\n no shutdown\n isis\n isis spbm 1\n isis spbm 1 circuit-type level-1\n isis enable\n ip address 10.10.10.1 255.255.255.0\n")
+
+
     # List of config files to try reading
     config_files = ["router1.cfg", "switch1.cfg", "missing.cfg"]
     
