@@ -33,20 +33,20 @@ def read_network_xml():
         # Hint: tree = ET.parse("network.xml")
         # Then get the root: root = tree.getroot()
         
-        tree = None  # TODO: Replace with ET.parse("network.xml")
-        root = None  # TODO: Replace with tree.getroot()
+        tree = ET.parse("06-data-formats/xml_examples/network.xml")  # TODO: Replace with ET.parse("network.xml")
+        root = tree.getroot()  # TODO: Replace with tree.getroot()
         
         print("   ✅ Loaded XML data successfully!")
         
         # TODO: Get the site name from XML
         # Hint: Use root.find("site_name").text
-        site_name = "Unknown"  # TODO: Replace with actual XML data
+        site_name = root.find("site_name").text  # TODO: Replace with actual XML data
         print(f"   🏢 Site: {site_name}")
         
         return tree, root  # Return both for other functions
         
     except FileNotFoundError:
-        print("   ❌ network.xml file not found!")
+        print("   ❌ 06-data-formats/xml_examples/network.xml file not found!")
         return None, None
     except ET.ParseError as e:
         print(f"   ❌ Invalid XML format: {e}")
@@ -70,7 +70,7 @@ def display_xml_devices(root):
     try:
         # TODO: Find the devices section
         # Hint: devices = root.find("devices")
-        devices = None  # TODO: Replace this
+        devices = root.find("devices")
         
         if devices is None:
             print("   ❌ No devices section found in XML")
@@ -81,7 +81,11 @@ def display_xml_devices(root):
         # For each device, extract: hostname, type, ip
         # Use device.find("hostname").text to get text content
         
-        pass  # Replace with your XML parsing loop
+        for device in devices.findall("device"):
+            hostname = device.find("hostname").text if device.find("hostname") is not None else "unknown"
+            device_type = device.find("type").text if device.find("type") is not None else "unknown"
+            ip_address = device.find("ip").text if device.find("ip") is not None else "unknown"
+            print(f"   🔹 {hostname} - {device_type} at {ip_address}")
         
     except Exception as e:
         print(f"   ❌ Error processing devices: {e}")
@@ -100,7 +104,7 @@ def display_xml_vlans(root):
     
     try:
         # TODO: Find the VLANs section
-        vlans = None  # TODO: Replace with root.find("vlans")
+        vlans = root.find("vlans")
         
         if vlans is None:
             print("   ❌ No VLANs section found in XML")
@@ -112,7 +116,11 @@ def display_xml_vlans(root):
         # - Get name and description from child elements
         # Format: "🔗 VLAN 10: Sales - Sales Department"
         
-        pass  # Replace with your VLAN parsing loop
+        for vlan in vlans.findall("vlan"):
+            vlan_id = vlan.get("id", "unknown")
+            name = vlan.find("name").text if vlan.find("name") is not None else "unknown"
+            description = vlan.find("description").text if vlan.find("description") is not None else "unknown"
+            print(f"   🔗 VLAN {vlan_id}: {name} - {description}")
         
     except Exception as e:
         print(f"   ❌ Error processing VLANs: {e}")
@@ -131,7 +139,7 @@ def add_xml_device(tree, root):
     
     try:
         # TODO: Find the devices section to add to
-        devices = None  # TODO: Replace with root.find("devices")
+        devices = root.find("devices")
         
         if devices is None:
             print("   ❌ No devices section found")
@@ -141,15 +149,24 @@ def add_xml_device(tree, root):
         # Hint: Use ET.SubElement(devices, "device") to create the device
         # Then add child elements for hostname, ip, type, location
         # Use ET.SubElement(device_element, "hostname").text = "server1"
-        
+        # Indent the new device properly in the XML structure for readability
+        device_element = ET.SubElement(devices, "device")
+        ET.SubElement(device_element, "hostname").text = "server1"
+        ET.SubElement(device_element, "ip").text = "192.168.1.50"
+        ET.SubElement(device_element, "type").text = "server"
+        ET.SubElement(device_element, "location").text = "datacenter"
+
         # Example device to add:
         # hostname: server1, ip: 192.168.1.5, type: server, location: datacenter
-        
-        pass  # Replace with your XML creation code
+  
+        ET.indent(tree, space="  ", level=0)  # Optional: Pretty-print the XML for readability        
         
         # TODO: Save the updated XML file
         # Hint: Use tree.write("network_updated.xml", encoding="UTF-8", xml_declaration=True)
         
+        tree.write("06-data-formats/xml_examples/network_updated.xml", encoding="UTF-8", xml_declaration=True)
+
+
         print("   ✅ Added server and saved to network_updated.xml")
         
     except Exception as e:
