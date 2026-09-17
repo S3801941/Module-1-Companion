@@ -31,16 +31,25 @@ def read_device_inventory():
         # TODO: Open the devices.json file and load the JSON data
         # Hint: Use json.load() to read JSON from a file
         # Replace this comment with your code:
-        pass
+        with open("06-data-formats/json_examples/devices.json", "r") as file:
+            data = json.load(file)
         
         # TODO: Print basic information about the network
         # Hint: Access data like a Python dictionary
-        # Show the site name and total device count
-        
-        print("   ✅ Loaded JSON data successfully!")
+
+            for key, value in data['network_info'].items():
+                print(f"   {key}: {value}")
+
+        # Show the site name and total device count            
         # TODO: Print site name from data['network_info']['site_name']
         # TODO: Print total devices from data['network_info']['total_devices']
         
+        print(f"   Total devices: {data['network_info']['total_devices']}")
+        print(f"   Site name: {data['network_info']['site_name']}")
+
+
+        print("   ✅ Loaded JSON data successfully!")
+
     except FileNotFoundError:
         print("   ❌ devices.json file not found!")
         print("   💡 Make sure the file exists in this directory")
@@ -59,7 +68,7 @@ def display_device_list():
     
     try:
         # TODO: Load the JSON data again (or better yet, modify this to accept data as parameter)
-        with open("devices.json", "r") as file:
+        with open("06-data-formats/json_examples/devices.json", "r") as file:
             data = json.load(file)
         
         # TODO: Loop through each device in data['devices']
@@ -67,7 +76,8 @@ def display_device_list():
         # For each device, print: hostname, type, and location
         # Format: "🖥️  router1 - router at office"
         
-        pass  # Replace with your loop
+        for device in data['devices']:
+            print(f"🖥️   {device['hostname']} - {device['type']} at {device['location']}")
         
     except Exception as e:
         print(f"   ❌ Error displaying devices: {e}")
@@ -81,23 +91,29 @@ def find_specific_devices():
     print("🔸 Finding routers:")
     
     try:
-        with open("devices.json", "r") as file:
+        with open("06-data-formats/json_examples/devices.json", "r") as file:
             data = json.load(file)
         
         # TODO: Create an empty list called 'routers'
-        
+        routers = []
+
         # TODO: Loop through all devices and find ones where type == 'router'
         # Add matching devices to the routers list
-        
+        for device in data['devices']:
+            if device['type'] == 'router':
+                routers.append(device)
+
         # TODO: Print how many routers you found
-        print(f"   Found ? routers:")  # Replace ? with actual count
+        print(f"   Found {len(routers)} routers:")  # Replace ? with actual count
         
         # TODO: Display each router's hostname and IP address
         # Format: "🔀 router1 (192.168.1.1)"
+        for router in routers:
+            print(f"🔀 {router['hostname']} ({router['ip']})")
         
     except Exception as e:
         print(f"   ❌ Error finding routers: {e}")
-
+    
 def add_new_device():
     """
     TODO: Learn to modify JSON data and save it back.
@@ -108,25 +124,32 @@ def add_new_device():
     
     try:
         # TODO: Load existing data
-        with open("devices.json", "r") as file:
+        with open("06-data-formats/json_examples/devices.json", "r") as file:
             data = json.load(file)
         
         # TODO: Create a new device dictionary
         # Include: hostname, ip, type, location
         # Use these values: "ap1", "192.168.1.4", "access_point", "office"
         new_device = {
-            # TODO: Fill in the device properties
+            "hostname": "ap1",
+            "ip": "192.168.1.4",
+            "type": "access_point",
+            "location": "office"
         }
         
         # TODO: Add the new device to the devices list
         # Hint: Use append() method
+        data['devices'].append(new_device)
         
         # TODO: Update the total device count
         # Hint: Increment data['network_info']['total_devices'] by 1
+        data['network_info']['total_devices'] += 1
         
         # TODO: Save the updated data to devices_updated.json
         # Hint: Use json.dump() with indent=2 for pretty formatting
-        
+        with open("devices_updated.json", "w") as file:
+            json.dump(data, file, indent=2)
+
         print("   ✅ Added access point and saved to devices_updated.json")
         
     except Exception as e:
