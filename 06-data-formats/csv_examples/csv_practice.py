@@ -32,14 +32,18 @@ def read_device_csv():
         
         # TODO: Open devices.csv file and create a CSV reader
         # Hint: Use csv.DictReader to automatically handle headers
-        # Replace this comment with your code:
-        
+        with open("06-data-formats/csv_examples/devices.csv", "r") as f:
+            csv_reader = csv.DictReader(f)
+
+
         # TODO: Read all rows into the devices list
         # Hint: Loop through the csv_reader and append each row
-        
+            for row in csv_reader:
+                devices.append(row)
+
         # TODO: Print how many devices were loaded
-        print(f"   ✅ Loaded ? devices from CSV")  # Replace ? with len(devices)
-        
+        print(f"   ✅ Loaded {len(devices)} devices from CSV")
+
         return devices  # Return the list so other functions can use it
         
     except FileNotFoundError:
@@ -69,12 +73,21 @@ def analyze_device_types(devices):
         # For each device, get the 'type' field
         # Count how many of each type we have
         # Hint: Use device['type'] to get the type
-        
+        for device in devices:
+            device_type = device.get('type', 'unknown')
+            if device_type in device_types:
+                device_types[device_type] += 1
+            else:
+                device_types[device_type] = 1
+
         # TODO: Display the results
         # Format: "📊 router: 2 devices"
-        
-        pass  # Replace with your counting logic
-        
+        for device_type, count in device_types.items():
+            print(f"📊 {device_type}: {count} devices")
+
+        #pass  # Replace with your counting logic
+        return count  # Return the count dictionary for further use if needed
+    
     except Exception as e:
         print(f"   ❌ Error analyzing devices: {e}")
 
@@ -97,12 +110,17 @@ def find_offline_devices(devices):
         # TODO: Loop through all devices
         # Check if device['status'] == 'offline'
         # Add offline devices to the list
-        
+        for device in devices:
+            if device.get('status', '').lower() == 'offline':
+                offline_devices.append(device)
+
         # TODO: Display results
         if offline_devices:
-            print(f"   ⚠️  ? offline devices:")  # Replace ? with count
+            print(f"   ⚠️  {len(offline_devices)} offline devices:")  # Replace ? with count
             # TODO: Show each offline device
             # Format: "❌ router2 in branch"
+            for device in offline_devices:
+                print(f"   ❌ {device.get('hostname', 'unknown')} in {device.get('location', 'unknown')}")
         else:
             print("   ✅ All devices are online!")
             
@@ -128,11 +146,41 @@ def create_status_report(devices):
         # TODO: Process each device to count totals by location
         # For each location, track: total_devices, online_devices, offline_devices
         # Hint: Check if location already exists in dictionary
-        
+        for device in devices:
+            location = device.get('location', 'unknown')
+            status = device.get('status', '').lower()
+            
+            if location not in locations:
+                locations[location] = {
+                    'total_devices': 0,
+                    'online_devices': 0,
+                    'offline_devices': 0
+                }
+            
+            locations[location]['total_devices'] += 1
+            if status == 'online':
+                locations[location]['online_devices'] += 1
+            elif status == 'offline':
+                locations[location]['offline_devices'] += 1
+
         # TODO: Write the report to status_report.csv
         # Use csv.writer to create the file
         # Include headers: location, total_devices, online_devices, offline_devices
-        
+        with open('06-data-formats/csv_examples/status_report.csv', 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['location', 'total_devices', 'online_devices', 'offline_devices']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            
+            writer.writeheader()
+            for location, stats in locations.items():
+                row = {
+                    'location': location,
+                    'total_devices': stats['total_devices'],
+                    'online_devices': stats['online_devices'],
+                    'offline_devices': stats['offline_devices']
+                }
+                writer.writerow(row)
+
+
         print("   ✅ Status report saved to status_report.csv")
         
     except Exception as e:
@@ -151,15 +199,23 @@ def add_new_devices():
         # Create a list with 2-3 new device dictionaries
         # Include: hostname, ip, type, location, status
         new_devices = [
-            # TODO: Add device dictionaries here
-            # Example: {"hostname": "switch3", "ip": "192.168.1.10", ...}
+            {"hostname": "switch3", "ip": "192.168.1.10", "type": "switch", "location": "Data Center A", "status": "online"},
+            {"hostname": "router2", "ip": "192.168.1.11", "type": "router", "location": "Data Center A", "status": "offline"},
+            {"hostname": "firewall2", "ip": "192.168.1.12", "type": "firewall", "location": "Data Center A", "status": "online"}
         ]
         
         # TODO: Append new devices to the CSV file
         # Hint: Open in 'a' (append) mode
         # Use csv.DictWriter with the proper fieldnames
+        with open('devices_updated.csv', 'a', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['hostname', 'ip', 'type', 'location', 'status']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            
+            # Write new devices
+            for device in new_devices:
+                writer.writerow(device)
         
-        print(f"   ✅ Added ? new devices to devices_updated.csv")  # Replace ?
+        print(f"   ✅ Added {len(new_devices)} new devices to devices_updated.csv")
         
     except Exception as e:
         print(f"   ❌ Error adding devices: {e}")
@@ -186,18 +242,20 @@ def main():
     print()
     
     # TODO: Learn to read CSV files
-    
-    # TODO: Analyze the data
+    read_device_csv()
+    read_devices = read_device_csv()  # Store the returned list for further analysis
 
+    # TODO: Analyze the data
+    analyze_device_types(read_devices)
     
     # TODO: Find problem devices
-
+    find_offline_devices(read_devices)
     
     # TODO: Create management reports
-
+    create_status_report(read_devices)
     
     # TODO: Add new data
-
+    add_new_devices()
     
     # Bonus: Tips for success
     csv_tips()
