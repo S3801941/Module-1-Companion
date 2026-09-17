@@ -1,0 +1,25 @@
+devices:
+- hostname: router1
+  ip: 192.168.1.1
+  location: office
+  type: router
+- hostname: switch1
+  ip: 192.168.1.2
+  location: office
+  type: switch
+- hostname: firewall1
+  ip: 192.168.1.3
+  location: datacenter
+  type: firewall
+network:
+  site_name: Main Office
+vlans:
+- description: Sales Department
+  id: 10
+  name: Sales
+- description: IT Department
+  id: 20
+  name: IT
+- description: Guest Network
+  id: 30
+  name: Guest

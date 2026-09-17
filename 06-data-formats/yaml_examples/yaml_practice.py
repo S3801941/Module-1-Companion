@@ -57,15 +57,18 @@ def read_network_config():
     try:
         # TODO: Open network.yaml file and load the YAML data
         # Hint: Use yaml.safe_load() to read YAML safely
-        # Replace this comment with your code:
-        pass
+        with open("06-data-formats/yaml_examples/network.yaml", "r") as f:
+            config = yaml.safe_load(f)
         
         # TODO: Print basic network information
         # Show the site name from config['network']['site_name']
         print("   ✅ Loaded YAML config successfully!")
+
         # TODO: Print the site name
-        
-        return None  # TODO: Return the config data instead
+        site_name = config.get('network', {}).get('site_name')
+        print(f"   📍 Site: {site_name}")
+
+        return config
         
     except FileNotFoundError:
         print("   ❌ network.yaml file not found!")
@@ -93,8 +96,12 @@ def display_devices(config):
         # TODO: Loop through devices in config['devices']
         # For each device, show: hostname, type, and IP
         # Format: "🖥️  router1 - router (192.168.1.1)"
-        
-        pass  # Replace with your loop
+        for device in config.get('devices', []):
+            hostname = device.get('hostname', 'unknown')
+            device_type = device.get('type', 'unknown')
+            ip = device.get('ip', 'unknown')
+            print(f"   🖥️  {hostname} - {device_type} ({ip})")
+
         
     except Exception as e:
         print(f"   ❌ Error displaying devices: {e}")
@@ -116,7 +123,11 @@ def display_vlans(config):
         # For each VLAN, show: ID, name, and description
         # Format: "🔗 VLAN 10: Sales - Sales Department"
         
-        pass  # Replace with your loop
+        for vlan in config.get('vlans', []):
+            vlan_id = vlan.get('id', 'unknown')
+            name = vlan.get('name', 'unknown')
+            description = vlan.get('description', 'unknown')
+            print(f"   🔗 VLAN {vlan_id}: {name} - {description}")
         
     except Exception as e:
         print(f"   ❌ Error displaying VLANs: {e}")
@@ -137,15 +148,22 @@ def add_new_vlan(config):
         # TODO: Create a new VLAN dictionary
         # Include: id (30), name ("Guest"), description ("Guest Network")
         new_vlan = {
-            # TODO: Fill in the VLAN properties
+            "id": 30,
+            "name": "Guest",
+            "description": "Guest Network"
         }
         
         # TODO: Add the new VLAN to config['vlans']
         # Hint: Use append() method
-        
+        config['vlans'].append(new_vlan)
+
+
         # TODO: Save updated config to network_updated.yaml
         # Hint: Use yaml.dump() with default_flow_style=False and indent=2
-        
+        with open("network_updated.yaml", "w") as f:
+            yaml.dump(config, f, default_flow_style=False, indent=2)
+
+
         print("   ✅ Added Guest VLAN and saved to network_updated.yaml")
         
     except Exception as e:
